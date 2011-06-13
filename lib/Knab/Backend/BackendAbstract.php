@@ -2,6 +2,8 @@
 
 namespace Knab\Backend;
 
+use Knab\Account;
+
 abstract class BackendAbstract {
 
     protected $username;
@@ -29,8 +31,7 @@ abstract class BackendAbstract {
         $this->password = $password;
     }
 
+    abstract protected function login();
     abstract public function getAccounts();
-    abstract public function getAccount($account_id);
-
-    abstract public function getOperations($account);
+    abstract public function getHistory(Account $account);
 }
