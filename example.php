@@ -15,7 +15,6 @@ Zend_Loader_Autoloader::getInstance();
 require_once 'Knab/ClassLoader.php';
 Knab\ClassLoader::register();
 
-header('Content-Type:text/plain;');
 $backend = new Knab\Backend\LaBanquePostale(array(
     'username' => '0320981175',
     'password' => '084860'
@@ -28,10 +27,27 @@ $accounts = $bank->getAccounts();
 
 foreach($accounts as $account){
 
-    printf("### % 15s ###\n",$account->getId());
-    //echo $account->getLink();
+    echo '<h1>'.$account->getLabel().'<span>'.$account->getBalance().'</span></h1>';
 
     $history = $backend->getHistory($account);
 
-    print_r($history);
+    echo '<table>';
+    foreach($history as $operation){
+        echo '<tr>';
+        echo '<td>';
+        echo $operation->getDate('d/m/Y');
+        echo '</td>';
+        echo '<td>';
+        echo $operation->getLabel();
+        echo '</td>';
+
+        echo '<td align="right">';
+        printf ('% -4.2f',$operation->getAmount());
+        echo '</td>';
+
+        echo '<td>';
+
+        echo '</tr>';
+    }
+    echo '</table>';
 }

@@ -39,8 +39,8 @@ class Operation {
        return $this->amount;
     }
 
-    public function getDate() {
-       return $this->date;
+    public function getDate($format = 'm-d-Y') {
+       return $this->date->format($format);
     }
 
 
