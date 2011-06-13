@@ -4,15 +4,21 @@ namespace Knab;
 
 class Account {
 
+    protected $bank;
     protected $id;
     protected $label;
     protected $balance;
     protected $link;
 
+    public function __construct(){}
+
+    public function getHistory($count = 15){
+        return $this->bank->getBackend()->getHistory($this,$count);
+    }
+
     /**
      * Setters
      */
-
     public function setId($id) {
         $this->id = $id;
         return $this;
@@ -33,6 +39,11 @@ class Account {
         return $this;
     }
 
+    public function setBank(Bank $bank) {
+        $this->bank = $bank;
+        return $this;
+    }
+
     /**
      * Getters
      */
@@ -50,6 +61,10 @@ class Account {
 
     public function getLink() {
        return $this->link;
+    }
+
+    public function getBank() {
+       return $this->bank;
     }
 
 

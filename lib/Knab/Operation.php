@@ -2,8 +2,11 @@
 
 namespace Knab;
 
+use Knab\Account;
+
 class Operation {
 
+    protected $account;
     protected $date;
     protected $label;
     protected $amount;
@@ -11,6 +14,11 @@ class Operation {
     /**
      * Setters
      */
+
+    public function setAccount(Account $account) {
+        $this->account = $account;
+        return $this;
+    }
 
     public function setLabel($label) {
         $this->label = $label;
@@ -30,6 +38,10 @@ class Operation {
     /**
      * Getters
      */
+
+    public function getAccount($account) {
+        return $this->account;
+    }
 
     public function getLabel() {
        return $this->label;
