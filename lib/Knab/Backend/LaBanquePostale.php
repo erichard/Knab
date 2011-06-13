@@ -3,6 +3,7 @@
 namespace Knab\Backend;
 
 use Knab\Account;
+use Knab\Operation;
 
 class LaBanquePostale extends BackendAbstract {
 
@@ -17,13 +18,12 @@ class LaBanquePostale extends BackendAbstract {
             $browser_opts = $options['browser.options'] ?: array();
             $this->setBrowser(new $options['browser.class']($browser_opts));
         }
-
     }
 
     public function getBrowser(){
         if ($this->browser == null) {
             $cookie_file = '/tmp/cookie.txt';
-            $this->browser = new \Zend_Http_Client('https://voscomptesenligne.labanquepostale.fr',array(
+            $this->browser = new \Zend_Http_Client(self::HOST,array(
                 'useragent' => "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)",
                 'adapter'   => 'Zend_Http_Client_Adapter_Curl',
                 'curloptions' => array(
@@ -38,7 +38,7 @@ class LaBanquePostale extends BackendAbstract {
 
     public function getAccounts() {
         if (!$this->logged) {
-            if (!$this->_login())
+            if (!$this->login())
                 throw new \Exception('Unable to login on '.$this->username);
         }
 
@@ -66,7 +66,8 @@ class LaBanquePostale extends BackendAbstract {
                 $balance = str_replace(',','.',$balance);
                 $account
                     ->setLabel($td1->nodeValue)
-                    ->setLink($td1->getAttribute('href'))
+                    ->setLink(
+                        str_replace('../..',self::HOST.'/voscomptes/canalXHTML',$td1->getAttribute('href')))
                     ->setId($td2->item(0)->nodeValue)
                     ->setBalance($balance);
 
@@ -85,7 +86,7 @@ class LaBanquePostale extends BackendAbstract {
 
     }
 
-    protected function _login(){
+    protected function login(){
         if ($this->logged) return true;
 
         $browser = $this->getBrowser();
@@ -185,5 +186,56 @@ class LaBanquePostale extends BackendAbstract {
             }
             return $this->logged;
         }
+    }
+
+    public function getHistory(Account $account, $count = 15){
+
+        $browser = $this->getBrowser();
+
+        $link = preg_replace('/typeRecherche=(\d){0,2}/','typeRecherche=10',$account->getLink());
+        $response = $browser->setUri($link)->request()->getBody();
+
+        $dom = new \DomDocument();
+        @$dom->loadHTML($response);
+        $xpath = new \DomXPath($dom);
+        $lignes = $xpath->query("//table[@id='mouvements']/tbody/tr");
+
+        $operations = array();
+
+        foreach($lignes as $idx => $ligne){
+            if ($idx >= $count) break;
+
+            $operation = new Operation();
+
+            $date = $xpath->query('./td',$ligne)->item(0)->textContent;
+            $date_time = \DateTime::createFromFormat('d/m/Y',$date,new \DateTimeZone('Europe/Paris'));
+            $date_time->setTime(0,0,0);
+            $operation->setDate($date_time);
+
+            $tp = $xpath->query('./td',$ligne)->item(1);
+            $label = strip_tags($dom->saveXML($tp));
+            $label = preg_replace('/\s+/',' ',$label);
+            $label = trim($label);
+            $operation->setLabel($label);
+
+            $tp = $xpath->query("./td[@class='num bdrL']",$ligne);
+            $amount = null;
+            $amount = preg_replace("/[\\xA0\\xC2]/",'',$amount);
+            $amount = str_replace(',','.',$amount);
+
+            if ($tp->item(0)->textContent{0} == '-') {
+                $amount = $tp->item(0)->textContent;
+            } else {
+                $amount = $tp->item(1)->textContent;
+            }
+
+            $amount = preg_replace("/[\\xA0\\xC2]/",'',$amount);
+            $amount = str_replace(',','.',$amount);
+
+            $operation->setAmount($amount);
+            $operations[] = $operation;
+        }
+
+        return $operations;
     }
 }

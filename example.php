@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL ^ E_STRICT);
+
+ini_set('display_errors',1);
 set_include_path(implode(
     PATH_SEPARATOR, array(
         __DIR__.'/lib',
@@ -23,5 +26,12 @@ $cookie_file = '/tmp/cookie.txt';
 $bank = new Knab\Bank($backend);
 $accounts = $bank->getAccounts();
 
+foreach($accounts as $account){
 
-var_dump($accounts);
+    printf("### % 15s ###\n",$account->getId());
+    //echo $account->getLink();
+
+    $history = $backend->getHistory($account);
+
+    print_r($history);
+}

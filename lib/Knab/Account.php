@@ -33,4 +33,26 @@ class Account {
         return $this;
     }
 
+    /**
+     * Getters
+     */
+    public function getId() {
+       return $this->id;
+    }
+
+    public function getLabel() {
+       return $this->label;
+    }
+
+    public function getBalance() {
+       return $this->balance;
+    }
+
+    public function getLink() {
+       return $this->link;
+    }
+
+
+
+
 }
