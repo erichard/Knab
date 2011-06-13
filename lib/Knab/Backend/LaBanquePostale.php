@@ -2,23 +2,16 @@
 
 namespace Knab\Backend;
 
+use Knab\Exception as Exception;
 use Knab\Account;
 use Knab\Operation;
+use Knab\Bank;
 
 class LaBanquePostale extends BackendAbstract {
 
     const HOST = 'https://voscomptesenligne.labanquepostale.fr';
 
     protected $browser;
-
-    public function __construct(array $options){
-        parent::__construct($options);
-
-        if (array_key_exists('browser.class',$options)){
-            $browser_opts = $options['browser.options'] ?: array();
-            $this->setBrowser(new $options['browser.class']($browser_opts));
-        }
-    }
 
     public function getBrowser(){
         if ($this->browser == null) {
@@ -36,11 +29,9 @@ class LaBanquePostale extends BackendAbstract {
         return $this->browser;
     }
 
-    public function getAccounts() {
-        if (!$this->logged) {
-            if (!$this->login())
-                throw new \Exception('Unable to login on '.$this->username);
-        }
+    public function getAccounts(Bank $bank) {
+        if (!$this->logged)
+            throw new Exception('Call login() first');
 
         echo "Logged !\n";
 
@@ -58,18 +49,18 @@ class LaBanquePostale extends BackendAbstract {
 
         if ($accounts_xml->length > 0){
             foreach ($accounts_xml as $a) {
-                $account = new Account();
+
                 $td1 = $xpath->query('td[@class="bdrT"]/span/a',$a)->item(0);
                 $td2 = $xpath->query('td[@class="bdrL num"]',$a);
 
                 $balance = preg_replace("/[\\xA0\\xC2]/",'',$td2->item(1)->nodeValue);
                 $balance = str_replace(',','.',$balance);
-                $account
-                    ->setLabel($td1->nodeValue)
-                    ->setLink(
-                        str_replace('../..',self::HOST.'/voscomptes/canalXHTML',$td1->getAttribute('href')))
-                    ->setId($td2->item(0)->nodeValue)
-                    ->setBalance($balance);
+                $account = array(
+                    'id'    => $td2->item(0)->nodeValue,
+                    'label' => $td1->nodeValue,
+                    'link'  => str_replace('../..',self::HOST.'/voscomptes/canalXHTML',$td1->getAttribute('href')),
+                    'balance' => $balance
+                );
 
                 $accounts[] = $account;
             }
@@ -78,15 +69,7 @@ class LaBanquePostale extends BackendAbstract {
         return $accounts;
     }
 
-    public function getAccount($account_id) {
-
-    }
-
-    public function getOperations($account) {
-
-    }
-
-    protected function login(){
+    public function login(){
         if ($this->logged) return true;
 
         $browser = $this->getBrowser();
@@ -95,6 +78,7 @@ class LaBanquePostale extends BackendAbstract {
                 ->setUri(self::HOST.'/voscomptes/canalXHTML/comptesCommun/synthese_assurancesEtComptes/init-synthese.ea')
                 ->request()
                 ->getBody();
+
 
         $dom = new \DomDocument();
         @$dom->loadHTML($response);
@@ -141,19 +125,19 @@ class LaBanquePostale extends BackendAbstract {
             $numbers = array();
 
             foreach ($hash as $idx => $img){
-            $numbers[$idx] = array_search($img,$map);
+                $numbers[$idx] = array_search($img,$map);
             }
 
             $hash_password = "";
 
-            foreach (str_split($this->password) as $char){
+            foreach (str_split($this->credential['password']) as $char){
                 $hash_password .= $numbers[$char];
             }
 
             $browser
                 ->setUri(self::HOST.'/wsost/OstBrokerWeb/auth')
                 ->setParameterPost(array(
-                    'username'    => $this->username,
+                    'username'    => $this->credential['username'],
                     'password'    => $hash_password,
                     'urlbackend'  => "/voscomptes/canalXHTML/identif.ea?origin=particuliers",
                     'origin'      => 'particuliers',
@@ -190,6 +174,9 @@ class LaBanquePostale extends BackendAbstract {
 
     public function getHistory(Account $account, $count = 15){
 
+        if (!$this->logged)
+            throw new Exception('Call login() first');
+
         $browser = $this->getBrowser();
 
         $link = preg_replace('/typeRecherche=(\d){0,2}/','typeRecherche=10',$account->getLink());
@@ -202,10 +189,12 @@ class LaBanquePostale extends BackendAbstract {
 
         $operations = array();
 
+
         foreach($lignes as $idx => $ligne){
-            if ($idx >= $count) break;
+            if ($count > 0 && $idx >= $count) break;
 
             $operation = new Operation();
+            $operation->setAccount($account);
 
             $date = $xpath->query('./td',$ligne)->item(0)->textContent;
             $date_time = \DateTime::createFromFormat('d/m/Y',$date,new \DateTimeZone('Europe/Paris'));
@@ -233,6 +222,8 @@ class LaBanquePostale extends BackendAbstract {
             $amount = str_replace(',','.',$amount);
 
             $operation->setAmount($amount);
+
+
             $operations[] = $operation;
         }
 

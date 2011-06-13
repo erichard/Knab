@@ -15,22 +15,45 @@ Zend_Loader_Autoloader::getInstance();
 require_once 'Knab/ClassLoader.php';
 Knab\ClassLoader::register();
 
-$backend = new Knab\Backend\LaBanquePostale(array(
-    'username' => '0320981175',
-    'password' => '084860'
-));
-
 $cookie_file = '/tmp/cookie.txt';
 
-$bank = new Knab\Bank($backend);
-$accounts = $bank->getAccounts();
+$knab = new Knab\Knab();
 
-foreach($accounts as $account){
+/*
+$knab->registerBank(
+    'LaBanquePostale',
+    array(
+        'username' => '0320981175',
+        'password' => '084860'
+    )
+);
+*/
 
-    echo '<h1>'.$account->getLabel().'<span>'.$account->getBalance().'</span></h1>';
 
-    $history = $backend->getHistory($account);
+$knab->registerBank(
+    'CreditAgricole',
+    array(
+        'username' => '65082400001',
+        'password' => '253070',
+        'site'     => 'm.ca-atlantique-vendee.fr'
+    )
+);
 
+
+
+/*
+foreach ($knab->getBank() as $bank) {
+    $bank->getAccounts();
+}
+*/
+
+header('Content-Type:text/plain');
+foreach($knab->getAccounts() as $account){
+
+//    echo '<h1>'.$account->getLabel().'<span>'.$account->getBalance().'</span></h1>';
+
+    $history = $account->getHistory();
+/*
     echo '<table>';
     foreach($history as $operation){
         echo '<tr>';
@@ -50,4 +73,5 @@ foreach($accounts as $account){
         echo '</tr>';
     }
     echo '</table>';
+    * */
 }

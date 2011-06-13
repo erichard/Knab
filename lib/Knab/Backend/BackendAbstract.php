@@ -2,36 +2,23 @@
 
 namespace Knab\Backend;
 
+use Knab\Exception as Exception;
 use Knab\Account;
+use Knab\Bank;
 
 abstract class BackendAbstract {
 
-    protected $username;
-    protected $password;
-    protected $logged;
+    protected $logged = false;
 
-    public function __construct(array $options){
-        if (!array_key_exists('username',$options)) {
-            throw new Exception('We need a username to login !');
-        }
-
-        if (!array_key_exists('password',$options)) {
-            throw new Exception('We need a password to login !');
-        }
-
-        $this->setUsername($options['username']);
-        $this->setPassword($options['password']);
+    public function __construct(array $credentials){
+        $this->credential = $credentials;
     }
 
-    public function setUsername($username) {
-        $this->username = $username;
+    public function isLogged(){
+        return (Boolean) $this->logged;
     }
 
-    public function setPassword($password) {
-        $this->password = $password;
-    }
-
-    abstract protected function login();
-    abstract public function getAccounts();
-    abstract public function getHistory(Account $account);
+    abstract public function login();
+    abstract public function getAccounts(Bank $bank);
+    abstract public function getHistory(Account $account, $count = 15);
 }
