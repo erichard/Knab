@@ -44,6 +44,15 @@ class ClassLoader
             restore_error_handler();
             return $exists;
         }
+        set_include_path(implode(
+            PATH_SEPARATOR, array(
+                dirname(__DIR__),
+                get_include_path()
+            )
+        ));
+
+        require_once 'Zend/Loader/Autoloader.php';
+        \Zend_Loader_Autoloader::getInstance();
     }
 
     public function handleIncludeError($errno, $errstr, $errfile, $errline, $errcontext)
