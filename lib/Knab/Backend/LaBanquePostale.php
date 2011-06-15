@@ -33,8 +33,6 @@ class LaBanquePostale extends BackendAbstract {
         if (!$this->logged)
             throw new Exception('Call login() first');
 
-        echo "Logged !\n";
-
         $browser = $this->getBrowser();
         $response = $browser->setUri(self::HOST.'/voscomptes/canalXHTML/comptesCommun/synthese_assurancesEtComptes/afficheSynthese-synthese.ea')->request();
 
@@ -55,12 +53,13 @@ class LaBanquePostale extends BackendAbstract {
 
                 $balance = preg_replace("/[\\xA0\\xC2]/",'',$td2->item(1)->nodeValue);
                 $balance = str_replace(',','.',$balance);
-                $account = array(
-                    'id'    => $td2->item(0)->nodeValue,
-                    'label' => $td1->nodeValue,
-                    'link'  => str_replace('../..',self::HOST.'/voscomptes/canalXHTML',$td1->getAttribute('href')),
-                    'balance' => $balance
-                );
+                $account = new Account();
+                $account
+                    ->setBank($bank)
+                    ->setId($td2->item(0)->nodeValue)
+                    ->setLabel($td1->nodeValue)
+                    ->setLink(str_replace('../..',self::HOST.'/voscomptes/canalXHTML',$td1->getAttribute('href')))
+                    ->setBalance($balance);
 
                 $accounts[] = $account;
             }
@@ -85,7 +84,6 @@ class LaBanquePostale extends BackendAbstract {
         $xpath = new \DomXPath($dom);
 
         if ($xpath->query('//table[@id="comptes"]')->length == 1){
-            echo 'Fast login ';
             $this->logged = true;
             return true;
         }

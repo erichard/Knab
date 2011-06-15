@@ -5,6 +5,7 @@ namespace Knab\Backend;
 use Knab\Exception as Exception;
 use Knab\Account;
 use Knab\Bank;
+use Knab\Operation;
 
 class CreditAgricole extends BackendAbstract {
 
@@ -96,7 +97,6 @@ class CreditAgricole extends BackendAbstract {
                 $id = preg_replace('/(.*)<br *\/>(\d*)<div.*/','$2',$dom->saveXml($div));
 
                 $balance = str_replace(',','.',$xpath->query("div",$div)->item(0)->textContent);
-                $balance = preg_replace("/[\\xA0\\xC2 ]/",'',$balance);
                 $balance = preg_replace("/[\\xA0\\xC2 €]/",'',$balance);
 
                 $account = new Account();
@@ -185,11 +185,36 @@ class CreditAgricole extends BackendAbstract {
         $xpath = new \DomXPath($dom);
         $lignes = $xpath->query("//table[@class='tb']/tr");
 
-        foreach ($lignes as $ligne){
-            echo $dom->saveXml($ligne);
-        }
         $operations = array();
+        $cpt = 0;
+        foreach ($lignes as $idx => $ligne){
 
-        return array();
+            $tds = $xpath->query('td',$ligne);
+
+            $date = trim($tds->item(0)->textContent);
+            $date_time = \DateTime::createFromFormat('d/m',$date,new \DateTimeZone('Europe/Paris'));
+
+            if (!$date_time || $cpt >= $count) continue;
+
+
+            $operation = new Operation();
+            $operation->setAccount($account);
+            $operation->setDate($date_time->setTime(0,0,0));
+            $operation->setLabel($tds->item(1)->textContent);
+
+            $amount = $this->_cleanBalance($tds->item(2)->textContent);
+            $operation->setAmount($amount);
+
+            $cpt++;
+            $operations[] = $operation;
+        }
+
+        return $operations;
+    }
+
+    protected function _cleanBalance($balance){
+        $balance = str_replace(',','.',$balance);
+        $balance = preg_replace("/[\\xA0\\xC2 €]/",'',$balance);
+        return (Float) $balance;
     }
 }

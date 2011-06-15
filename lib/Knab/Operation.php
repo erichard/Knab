@@ -11,6 +11,9 @@ class Operation {
     protected $label;
     protected $amount;
 
+    public function __construct(){
+        $this->date = new \DateTime();
+    }
     /**
      * Setters
      */
@@ -56,6 +59,9 @@ class Operation {
     }
 
 
+    public function __toString(){
+        return sprintf('% 10s - %s - %5.2f',$this->getDate(),$this->getLabel(),$this->getAmount());
+    }
 
 
 }

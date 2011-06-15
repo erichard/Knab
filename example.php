@@ -7,25 +7,27 @@ require_once 'config.php';
 
 $knab = new Knab\Knab();
 
-/*
 $knab->registerBank(
     'LaBanquePostale',
     $bank_lbp
 );
-*/
 
 $knab->registerBank(
     'CreditAgricole',
     $bank_cragr
 );
 
-header('Content-Type:text/plain');
+//header('Content-Type:text/plain');
 foreach($knab->getAccounts() as $account){
 
-//    echo '<h1>'.$account->getLabel().'<span>'.$account->getBalance().'</span></h1>';
+    printf('<h1>%s - %s <span>%5.2f</span></h1>',
+        str_replace( 'Knab\\Backend\\','',get_class($account->getBank()->getBackend()) ),
+        $account->getLabel(),
+        $account->getBalance()
+    );
 
     $history = $account->getHistory();
-/*
+
     echo '<table>';
     foreach($history as $operation){
         echo '<tr>';
@@ -45,5 +47,5 @@ foreach($knab->getAccounts() as $account){
         echo '</tr>';
     }
     echo '</table>';
-    * */
+
 }
