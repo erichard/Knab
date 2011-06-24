@@ -1,31 +1,25 @@
-Knab PHP Library
-================
+#Knab PHP Library
 
-What is Knab?
--------------
+## What is Knab?
 
 Knab is a small PHP Library which provides an easy connection to your
 bank account.
 
-Supported Bank
---------------
+## Supported Bank
 
-* La Banque Postale
-* Crédit Agricole
+ - La Banque Postale
+ - Crédit Agricole
 
-Documentation
--------------
+## Documentation
 
-_examples: https://github.com/erichard/Knab/wiki/Examples
+ - [Examples](https://github.com/erichard/Knab/wiki/Examples) - How to use the library
 
-Requirements
-------------
+## Requirements
 
 Knab use namespace so it will need PHP 5.3 or later.
 If you still want to use PHP 5.2 note that the conversion
 should not be a hard work.
 
-License
--------
+## License
 
 Knab is released under MIT license.
