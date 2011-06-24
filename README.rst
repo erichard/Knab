@@ -13,6 +13,11 @@ Supported Bank
 * La Banque Postale
 * Crédit Agricole
 
+Documentation
+-------------
+
+_examples: https://github.com/erichard/Knab/wiki/Examples
+
 Requirements
 ------------
 
