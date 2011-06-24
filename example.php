@@ -20,7 +20,7 @@ $knab->registerBank(
 //header('Content-Type:text/plain');
 foreach($knab->getAccounts() as $account){
 
-    printf('<h1>%s - %s <span>%5.2f</span></h1>',
+    printf('<h1>%s - %s : % -5.2f</h1>',
         str_replace( 'Knab\\Backend\\','',get_class($account->getBank()->getBackend()) ),
         $account->getLabel(),
         $account->getBalance()
