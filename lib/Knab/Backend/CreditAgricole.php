@@ -9,6 +9,8 @@ use Knab\Operation;
 
 class CreditAgricole extends BackendAbstract {
 
+    const NAME = 'Crédit Agricole';
+
     protected $browser;
     protected $site;
     protected $scheme = 'https';

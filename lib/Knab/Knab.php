@@ -23,6 +23,25 @@ class Knab {
         return $this;
     }
 
+    public function getAvailableBackends(){
+
+        $backends = array();
+        $iterator = new \DirectoryIterator(__DIR__.'/Backend');
+        foreach ($iterator as $file) {
+            if ($file->isFile() && $file->getExtension() == 'php') {
+                $pathinfo = pathinfo($file->getPathname());
+                $className = 'Knab\\Backend\\'.$pathinfo['filename'];
+                if (is_subclass_of($className, 'Knab\\Backend\\BackendAbstract')) {
+                    $backends[] = array(
+                        'name'  => $className::NAME,
+                        'class' => $className
+                    );
+                }
+            }
+        }
+        return $backends;
+    }
+
     public function unregisterBank(Bank $bank){
         $id = spl_object_hash($bank);
         unset($this->sources[$id]);
@@ -32,6 +51,9 @@ class Knab {
     public function getAccounts(){
         $accounts = array();
         foreach ($this->sources as $bank){
+            if (!$bank->isLogged()){
+                $bank->login();
+            }
             $accounts = array_merge($accounts,$bank->getAccounts());
         }
 
