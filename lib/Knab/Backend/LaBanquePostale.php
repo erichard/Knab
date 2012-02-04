@@ -200,8 +200,9 @@ class LaBanquePostale extends BackendAbstract {
             $operation->setDate($date_time);
 
             $tp = $xpath->query('./td',$ligne)->item(1);
-            $label = strip_tags($dom->saveXML($tp));
-            $label = preg_replace('/\s+/',' ',$label);
+            $label = strip_tags($dom->saveXML($tp),'<br>');
+            $label = str_replace("<br />","\n",$label);
+            
             $label = trim($label);
             $operation->setLabel($label);
 
