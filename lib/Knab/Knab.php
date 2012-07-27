@@ -51,8 +51,8 @@ class Knab {
     public function getAccounts(){
         $accounts = array();
         foreach ($this->sources as $bank){
-            if (!$bank->isLogged()){
-                $bank->login();
+            if (!$bank->getBackend()->isLogged()){
+                $bank->getBackend()->login();
             }
             $accounts = array_merge($accounts,$bank->getAccounts());
         }

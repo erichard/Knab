@@ -7,8 +7,6 @@ use Knab\Account;
 use Knab\Operation;
 use Knab\Bank;
 
-use Goutte\Client;
-
 class LaBanquePostale extends BackendAbstract {
 
     const NAME = 'La Banque Postale';
@@ -18,11 +16,7 @@ class LaBanquePostale extends BackendAbstract {
 
     public function getBrowser(){
         if ($this->browser == null) {
-            //$cookie_file = '/tmp/cookie.txt';
-            $client = new Client();
-
-            $client->setHeader('User-Agent',"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
-
+            $cookie_file = '/tmp/cookie.txt';
             $this->browser = new \Zend_Http_Client(self::HOST,array(
                 'useragent' => "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)",
                 'adapter'   => 'Zend_Http_Client_Adapter_Curl',
