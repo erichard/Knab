@@ -12,7 +12,7 @@ bank account.
 
 ## Documentation
 
- - [Examples](https://github.com/erichard/Knab/wiki/Examples) - How to use the library
+ - [How To Use](https://github.com/erichard/Knab/blob/master/doc/how_to_use.md) - How to use the library
 
 ## Requirements
 

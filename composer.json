@@ -1,0 +1,11 @@
+{
+    "name": "erichard/knab",
+    "require": {
+        "php": ">=5.3.3",
+        "fabpot/goutte": "1.0.*"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": { "": "src/" }
+    }
+}
