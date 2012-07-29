@@ -1,17 +1,18 @@
 {
-    "name":         "erichard/knab",
-    "description":  "Connect to your bank with Knab PHP library",
-    "keywords":     ["Bank"],
-    "authors":      [
+    "name": "erichard/knab",
+    "description": "Connect to your bank with Knab PHP library",
+    "keywords": ["Bank"],
+    "authors": [
         {
-            "name":     "Erwan Richard <erwann.richard@gmail.com>"
+            "name": "Erwan Richard",
+            "email": "erwann.richard@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.3.3",
-        "fabpot/goutte": "1.0.*"
+        "fabpot/goutte": "*"
     },
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-0": { "Knab": "src/" }
     }
 }

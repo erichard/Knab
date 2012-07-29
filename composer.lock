@@ -1,17 +1,11 @@
 {
-    "hash": "01ae47edce8ce89451602a375d7d6cc0",
+    "hash": "9b2bc7de61b836c024deff14d6d64fab",
     "packages": [
         {
             "package": "fabpot/goutte",
             "version": "dev-master",
-            "alias-pretty-version": "1.0.x-dev",
-            "alias-version": "1.0.9999999.9999999-dev"
-        },
-        {
-            "package": "fabpot/goutte",
-            "version": "dev-master",
-            "source-reference": "df14259688c7d6f1d366aa073a589695d2b9f451",
-            "commit-date": "1343194442"
+            "source-reference": "5f7fd00c7f1c47a66e552f636450ff883e02cf33",
+            "commit-date": "1343461948"
         },
         {
             "package": "guzzle/common",
@@ -82,8 +76,8 @@
         {
             "package": "symfony/finder",
             "version": "dev-master",
-            "source-reference": "304b90eed4b2fed6f4831b569c2a7fb68ea61a14",
-            "commit-date": "1343374503"
+            "source-reference": "7fe9695cb1dae09df7f545aabed8fa4b0026108b",
+            "commit-date": "1343512949"
         },
         {
             "package": "symfony/process",
@@ -94,15 +88,15 @@
         {
             "package": "symfony/process",
             "version": "dev-master",
-            "source-reference": "v2.1.0-BETA4",
-            "commit-date": "1342632812"
+            "source-reference": "7278cfeeb168654bcd148127796cfcd504a30dbe",
+            "commit-date": "1343512949"
         }
     ],
     "packages-dev": null,
     "aliases": [
 
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": [
 
     ]
