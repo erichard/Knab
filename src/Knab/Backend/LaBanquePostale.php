@@ -90,13 +90,14 @@ class LaBanquePostale implements BackendInterface
 
         // Build the password
         $hashPassword = "";
-        foreach (str_split($this->getCredentials()['password']) as $char) {
+        $credentials = $this->getCredentials();
+        foreach (str_split($credentials['password']) as $char) {
             $hashPassword .= $numbers[$char];
         }
 
         // POST the login form
         $crawler = $browser->request('POST', $this->getUri('post-auth'), array(
-            'username'    => $this->getCredentials()['username'],
+            'username'    => $credentials['username'],
             'password'    => $hashPassword,
             'urlbackend'  => $this->getUri('url-backend'),
             'origin'      => 'particuliers',
