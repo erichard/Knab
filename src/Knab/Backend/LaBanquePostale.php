@@ -212,10 +212,17 @@ class LaBanquePostale implements BackendInterface
             $operation->setDate($dateTime);
 
             // operation title
-            $label = $crawler->filter('td')->eq(1)->text();
-            $label = strip_tags($label, '<br>');
-            $label = str_replace("<br />", "\n", $label);
+            $label = $crawler->filter('td')->eq(1)->each(function ($node, $i){
+                $innerHTML = '';
+                foreach ($node->childNodes as $child) {
+                    $innerHTML .= $child->ownerDocument->saveXml($child);
+                }
+                return $innerHTML;
+            });
+            $label = strip_tags($label[0], '<br>');
+            $label = preg_replace("#<br ?/>#", "\n", $label);
             $label = trim($label);
+
             $operation->setLabel($label);
 
             // operation amount
