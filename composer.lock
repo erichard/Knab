@@ -1,6 +1,12 @@
 {
-    "hash": "9b2bc7de61b836c024deff14d6d64fab",
+    "hash": "6cce6552e0cd3da8d629d79f79647bda",
     "packages": [
+        {
+            "package": "fabpot/goutte",
+            "version": "dev-master",
+            "alias-pretty-version": "1.0.x-dev",
+            "alias-version": "1.0.9999999.9999999-dev"
+        },
         {
             "package": "fabpot/goutte",
             "version": "dev-master",
@@ -28,8 +34,8 @@
         {
             "package": "symfony/browser-kit",
             "version": "dev-master",
-            "source-reference": "v2.1.0-BETA4",
-            "commit-date": "1342347231"
+            "source-reference": "a224ae56865fd63e4a63958275117168479c8e0f",
+            "commit-date": "1343564266"
         },
         {
             "package": "symfony/css-selector",
@@ -96,7 +102,7 @@
     "aliases": [
 
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [
 
     ]
